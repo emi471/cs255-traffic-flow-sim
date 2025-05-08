@@ -28,6 +28,29 @@ class Road:
             i = self.traffic_signal_group
             return self.traffic_signal.current_cycle[i]
         return True
+    
+    # NEW vehicle collision bounds helpers
+    def get_vehicle_position(self, vehicle):
+        # Convert vehicle's 1D position to 2D world coordinates
+        x = self.start[0] + self.angle_cos * vehicle.x
+        y = self.start[1] + self.angle_sin * vehicle.x
+        return (x, y)
+    
+    def get_vehicle_bounds(self, vehicle):
+       # Get vehicle's rotated bounding box in world coordinates
+       center_x, center_y = self.get_vehicle_position(vehicle)
+       half_length = vehicle.l / 2
+       half_width = vehicle.h / 2
+       return [ # Calculate rounded corners
+            (center_x - half_length*self.angle_cos - half_width*self.angle_sin,
+             center_y - half_length*self.angle_sin + half_width*self.angle_cos),
+            (center_x + half_length*self.angle_cos - half_width*self.angle_sin,
+             center_y + half_length*self.angle_sin + half_width*self.angle_cos),
+            (center_x + half_length*self.angle_cos + half_width*self.angle_sin,
+             center_y + half_length*self.angle_sin - half_width*self.angle_cos),
+            (center_x - half_length*self.angle_cos + half_width*self.angle_sin,
+             center_y - half_length*self.angle_sin - half_width*self.angle_cos)
+        ]
 
     def update(self, dt):
         n = len(self.vehicles)

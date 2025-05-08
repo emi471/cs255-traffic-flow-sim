@@ -16,6 +16,10 @@ class Simulation:
     def __init__(self, config={}):
         # Set default configuration
         self.set_default_config()
+        
+        # NEW Collision tracking
+        self.collision_count = 0
+        self.colliding_vehicles = set()  # Tracks currently colliding vehicles
 
         # Update configuration
         for attr, val in config.items():
@@ -50,8 +54,97 @@ class Simulation:
         sig = TrafficSignal(roads, config)
         self.traffic_signals.append(sig)
         return sig
+    
+    # NEW Main collision detection method
+    def detect_collisions(self):
+        # Get all vehicles with their bounds
+        all_vehicles = []
+        for road in self.roads:
+            for vehicle in road.vehicles:
+                all_vehicles.append({
+                    'vehicle': vehicle,
+                    'bounds': road.get_vehicle_bounds(vehicle)
+                })
+        
+        # Reset collision states but maintain visual feedback
+        for data in all_vehicles:
+            vehicle = data['vehicle']
+            if not any(self._check_collision(data['bounds'], other['bounds']) 
+               for other in all_vehicles if other['vehicle'] != vehicle):
+                # No longer colliding with anyone
+                vehicle.is_colliding = False
+                vehicle.has_counted_collision = False
+                vehicle.color = vehicle._original_color
+        
+        # Check all vehicle pairs
+        for i in range(len(all_vehicles)):
+            for j in range(i+1, len(all_vehicles)):
+                v1_data = all_vehicles[i]
+                v2_data = all_vehicles[j]
+                
+                if self._check_collision(v1_data['bounds'], v2_data['bounds']):
+                    v1 = v1_data['vehicle']
+                    v2 = v2_data['vehicle']
+                    
+                    # Visual feedback (always turn red)
+                    v1.is_colliding = True
+                    v2.is_colliding = True
+                    v1.color = (255, 0, 0)
+                    v2.color = (255, 0, 0)
+                    
+                    # Only count if this is a new collision
+                    if not v1.has_counted_collision or not v2.has_counted_collision:
+                        self.collision_count += 1
+                        v1.has_counted_collision = True
+                        v2.has_counted_collision = True
+                    
+    def _check_collision(self, poly1, poly2):
+        # SAT algorithm for convex polygon collision
+        for polygon in [poly1, poly2]:
+            for i in range(len(polygon)):
+                x1, y1 = polygon[i]
+                x2, y2 = polygon[(i+1)%len(polygon)]
+                edge_x, edge_y = x2-x1, y2-y1
+                normal_x, normal_y = -edge_y, edge_x
+                
+                # Project both polygons
+                min1, max1 = self._project(poly1, normal_x, normal_y)
+                min2, max2 = self._project(poly2, normal_x, normal_y)
+                
+                if max1 < min2 or max2 < min1:
+                    return False
+        return True
+
+    def _project(self, polygon, x, y):
+        # Project polygon onto axis
+        min_p = max_p = polygon[0][0]*x + polygon[0][1]*y
+        for px, py in polygon[1:]:
+            p = px*x + py*y
+            min_p = min(min_p, p)
+            max_p = max(max_p, p)
+        return (min_p, max_p)
+
+    def _handle_collision(self, v1, v2):
+        """Handle collision visual feedback and counting"""
+        if v1.id not in self.colliding_vehicles:
+            self.collision_count += 1
+            self.colliding_vehicles.add(v1.id)
+            self.colliding_vehicles.add(v2.id)
+            v1.color = (255, 0, 0)  # Red
+            v2.color = (255, 0, 0)  # Red
+
+    def _handle_separation(self, v1, v2):
+        """Reset vehicles when no longer colliding"""
+        if v1.id in self.colliding_vehicles:
+            v1.color = v1._original_color
+            self.colliding_vehicles.remove(v1.id)
+        if v2.id in self.colliding_vehicles:
+            v2.color = v2._original_color
+            self.colliding_vehicles.remove(v2.id)
 
     def update(self):
+        # NEW Detect collisions
+        self.detect_collisions()
         # Update every road
         for road in self.roads:
             road.update(self.dt)

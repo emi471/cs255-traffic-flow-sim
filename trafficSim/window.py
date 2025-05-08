@@ -306,6 +306,12 @@ class Window:
         if self.sim.vehicle_tracking:
             total_lifetime = sum(v['lifetime'] for v in self.sim.vehicle_tracking.values())
             avg_lifetime = total_lifetime / len(self.sim.vehicle_tracking)
+        # NEW Collision tracking
+        text_collisions = self.text_font.render(
+            f'Collisions={self.sim.collision_count}', 
+            False, 
+            (0, 0, 0)
+        )
         text_fps = self.text_font.render(f't={self.sim.t:.5}', False, (0, 0, 0))
         text_frc = self.text_font.render(f'n={self.sim.frame_count}', False, (0, 0, 0))
         vehicles_passed = int(self.sim.vehiclesPassed)
@@ -328,6 +334,8 @@ class Window:
         self.screen.blit(text_vehicle_rate, (200, 20))
         # NEW Print average lifetime to screen
         self.screen.blit(text_avg_lifetime, (400, 20))
+        # NEW Print total collisions to the screen
+        self.screen.blit(text_collisions, (600, 20))
 
         if self.sim.isPaused:
             text_pause = self.text_font.render(f'Play', False, (0, 0, 0))

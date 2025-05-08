@@ -20,6 +20,11 @@ class Vehicle:
         Vehicle._next_id += 1
         self.spawn_time = None
         self.exit_time = None
+        
+        # NEW Flags for collision detection
+        self._original_color = self.color
+        self.is_colliding = False
+        self.has_counted_collision = False
 
         # Update configuration
         for attr, val in config.items():
@@ -29,7 +34,7 @@ class Vehicle:
         self.init_properties()
 
     def set_default_config(self):  
-        vehicleTypes = ["car", "truck", "bus", "motorcycle"]  
+        vehicleTypes = ["car", "car", "car", "car"]  
         colors = [RED, GREEN, BLUE, ORANGE, YELLOW, CYAN, PURPLE]
         # self.vehicleType with the probability:
         # car: 0.2
@@ -40,7 +45,7 @@ class Vehicle:
         if(self.vehicleType == "car"):
             self.l = 3
             self.h = 2
-            self.color = RED
+            self.color = BLUE
             self.s0 = 3
             self.T = 1
             self.v_max = 20
