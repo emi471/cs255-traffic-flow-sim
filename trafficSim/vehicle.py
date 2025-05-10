@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.random import randint
 
 # Define Colors as constants
 RED = (255, 0, 0)
@@ -34,50 +35,50 @@ class Vehicle:
         self.init_properties()
 
     def set_default_config(self):  
-        vehicleTypes = ["car", "car", "car", "car"]  
+        vehicleTypes = ["car", "truck", "sports", "motorcycle"]  
         colors = [RED, GREEN, BLUE, ORANGE, YELLOW, CYAN, PURPLE]
         # self.vehicleType with the probability:
         # car: 0.2
         # truck: 0.05
         # bus: 0.05
         # motorcycle: 0.7
-        self.vehicleType = np.random.choice(vehicleTypes, p=[0.3, 0.1, 0.1, 0.5])
+        self.vehicleType = np.random.choice(vehicleTypes, p=[0.5, 0.05, 0.15, 0.3])
         if(self.vehicleType == "car"):
             self.l = 3
             self.h = 2
             self.color = BLUE
             self.s0 = 3
             self.T = 1
-            self.v_max = 20
-            self.a_max = 5
-            self.b_max = 10
+            self.v_max = randint(15, 25)
+            self.a_max = randint(5, 8)
+            self.b_max = randint(7, 15)
         elif(self.vehicleType == "truck"):
             self.l = 5
             self.h = 3
             self.color = YELLOW
             self.s0 = 5
+            self.T = 1.5
+            self.v_max = randint(12, 17)
+            self.a_max = randint(5, 7)
+            self.b_max = randint(4, 12)
+        elif(self.vehicleType == "sports"):
+            self.l = 3
+            self.h = 2
+            self.color = CYAN
+            self.s0 = 3
             self.T = 1
-            self.v_max = 15
-            self.a_max = 4
-            self.b_max = 8
-        elif(self.vehicleType == "bus"):
-            self.l = 5
-            self.h = 3
-            self.color = BLUE
-            self.s0 = 4
-            self.T = 1
-            self.v_max = 20
-            self.a_max = 6
-            self.b_max = 12
+            self.v_max = randint(20, 35)
+            self.a_max = randint(8, 12)
+            self.b_max = randint(12, 18)
         elif(self.vehicleType == "motorcycle"):
             self.l = 2
             self.h = 1
             self.color = ORANGE
-            self.s0 = 2
-            self.T = 1
-            self.v_max = 25
-            self.a_max = 7
-            self.b_max = 20
+            self.s0 = 1
+            self.T = 0.5
+            self.v_max = randint(20, 30)
+            self.a_max = randint(4, 8)
+            self.b_max = randint(15, 20)
 
         self.path = []
         self.current_road_index = 0

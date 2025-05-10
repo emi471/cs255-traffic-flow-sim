@@ -335,7 +335,7 @@ class Window:
         # NEW Print average lifetime to screen
         self.screen.blit(text_avg_lifetime, (400, 20))
         # NEW Print total collisions to the screen
-        self.screen.blit(text_collisions, (600, 20))
+        self.screen.blit(text_collisions, (630, 20))
 
         if self.sim.isPaused:
             text_pause = self.text_font.render(f'Play', False, (0, 0, 0))
