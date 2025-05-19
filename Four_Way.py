@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Apr 24 13:33:46 2025
-
-@author: mmascavage
 """
 
 import numpy as np
@@ -127,8 +125,12 @@ sim.create_gen({
     [2, {'path': [3, *road(12+7*n), 6]}],
 ]})
 
-sim.create_signal([[0], [1], [2], [3]])
-#sim.create_signal([[12], [13], [14], [15]])
+# In the sim.create_signal() call, update with FCFS parameters:
+sim.create_signal([[0], [1], [2], [3]], {
+    'min_green_time': 0.5,  # Minimum green time (seconds)
+    'max_green_time': 1,  # Maximum green time
+    'yellow_time': 0.5  # Yellow light duration
+})
 
 # Start simulation
 win = Window(sim)
