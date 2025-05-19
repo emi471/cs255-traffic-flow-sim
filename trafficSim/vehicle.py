@@ -42,16 +42,16 @@ class Vehicle:
         # truck: 0.05
         # bus: 0.05
         # motorcycle: 0.7
-        self.vehicleType = np.random.choice(vehicleTypes, p=[0.5, 0.05, 0.15, 0.3])
+        self.vehicleType = np.random.choice(vehicleTypes, p=[0.5, 0.05, 0.2, 0.25])
         if(self.vehicleType == "car"):
             self.l = 3
             self.h = 2
             self.color = BLUE
             self.s0 = 3
-            self.T = 1
+            self.T = 0.5
             self.v_max = randint(15, 25)
             self.a_max = randint(5, 8)
-            self.b_max = randint(7, 15)
+            self.b_max = randint(17, 25)
         elif(self.vehicleType == "truck"):
             self.l = 5
             self.h = 3
@@ -60,7 +60,7 @@ class Vehicle:
             self.T = 1.5
             self.v_max = randint(12, 17)
             self.a_max = randint(5, 7)
-            self.b_max = randint(4, 12)
+            self.b_max = randint(14, 22)
         elif(self.vehicleType == "sports"):
             self.l = 3
             self.h = 2
@@ -69,7 +69,7 @@ class Vehicle:
             self.T = 1
             self.v_max = randint(20, 35)
             self.a_max = randint(8, 12)
-            self.b_max = randint(12, 18)
+            self.b_max = randint(22, 28)
         elif(self.vehicleType == "motorcycle"):
             self.l = 2
             self.h = 1
@@ -78,7 +78,7 @@ class Vehicle:
             self.T = 0.5
             self.v_max = randint(20, 30)
             self.a_max = randint(4, 8)
-            self.b_max = randint(15, 20)
+            self.b_max = randint(25, 30)
 
         self.path = []
         self.current_road_index = 0
@@ -126,5 +126,3 @@ class Vehicle:
 
     def unslow(self):
         self.v_max = self._v_max
-        
-
